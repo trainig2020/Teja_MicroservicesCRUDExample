@@ -8,7 +8,10 @@ spring:
           uri: lb://department-service
           predicates:
             - Path=/department/**
+          
 
 server:
  port:
     8084
+
+management.endpoints.web.exposure.include: "*"
