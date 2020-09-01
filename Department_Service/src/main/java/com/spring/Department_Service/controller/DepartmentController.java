@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.spring.Department_Service.model.Department;
 import com.spring.Department_Service.model.DepartmentList;
 import com.spring.Department_Service.model.Employee;
@@ -30,10 +31,13 @@ public class DepartmentController {
 	@Autowired
 	private EmployeeService employeeService;
 	
+	
 	@GetMapping("/listDept")
 	public List<Department> getAllDepartment(){
 		return departmentService.getAllDepartments();
 	}
+	
+	
 	@GetMapping("/listDept/{id}")
 	public Department getDeptById(@PathVariable int id) {
 		return departmentService.getDeptById(id);
@@ -55,11 +59,15 @@ public class DepartmentController {
 		return department;
 	}
 	
+	
+	
 	@PutMapping("/updateDept/{id}")
 	public Department updateDepartment(@RequestBody Department department, @PathVariable int id) {
 		departmentService.updateDepartment(id,department);
 		return department;
 	}
+	
+	
 	
 	@DeleteMapping("/deleteDept/{id}")
 	public String deleteDepartment(@PathVariable int id) {
@@ -78,10 +86,12 @@ public class DepartmentController {
 		return employeeService.getEmployeeById(empid);
 	}
 	
+	
 	@PostMapping("/addEmp")
 	public Employee addEmployee(@RequestBody Employee employee) {
 		return employeeService.insertEmployee(employee);
 	}
+	
 	
 	@PutMapping("/updateEmp/{empid}")
 	public String updateEmployee(@RequestBody Employee employee, @PathVariable int empid) {
