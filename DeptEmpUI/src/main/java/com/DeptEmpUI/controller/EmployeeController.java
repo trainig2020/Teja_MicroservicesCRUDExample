@@ -51,7 +51,7 @@ public class EmployeeController {
 		employee1.setDeptId(employee.getDeptId());
 		
 		
-		restTemplate.postForObject("http://department-service/department/addEmp", employee1, Employee.class);
+		restTemplate.postForObject("http://gateway-service/department/addEmp", employee1, Employee.class);
 
 		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
 	}
@@ -85,7 +85,7 @@ public class EmployeeController {
 		  employee1.setAge(employee.getAge());
 		  employee1.setDeptId(employee.getDeptId());
 		 
-		  restTemplate.put("http://department-service/department/updateEmp/"+employeeId, employee);
+		  restTemplate.put("http://gateway-service/department/updateEmp/"+employeeId, employee);
 
 		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
 
@@ -95,7 +95,7 @@ public class EmployeeController {
 	public ModelAndView deleteEmployee(HttpServletRequest request) {
 		int employeeId = Integer.parseInt(request.getParameter("empId"));
 		int deptId = Integer.parseInt(request.getParameter("deptId"));
-		restTemplate.delete("http://department-service/department/deleteEmp/"+employeeId);
+		restTemplate.delete("http://gateway-service/department/deleteEmp/"+employeeId);
 		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
 	}
 

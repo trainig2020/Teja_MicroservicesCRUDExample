@@ -25,9 +25,11 @@ public class Department {
 		this.deptName = deptName;
 	}
 
-	public Department(int deptId) {
+	
+
+	public Department(String deptName) {
 		super();
-		this.deptId = deptId;
+		this.deptName = deptName;
 	}
 
 	public int getDeptId() {

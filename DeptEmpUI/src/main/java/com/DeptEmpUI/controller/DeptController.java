@@ -20,7 +20,6 @@ import com.DeptEmpUI.model.Employee;
 import com.DeptEmpUI.model.EmployeeList;
 
 @RestController
-
 public class DeptController {
 	@Autowired
 	private RestTemplate restTemplate;
@@ -34,7 +33,7 @@ public class DeptController {
 	
 	@GetMapping("/home")
 	public ModelAndView listDeptId(HttpServletRequest request) {
-		DepartmentList lst =  restTemplate.getForObject("http://department-service/department/dept", DepartmentList.class);
+		DepartmentList lst =  restTemplate.getForObject("http://gateway-service/department/dept", DepartmentList.class);
 		int deptId = lst.getDepartments().get(0).getDeptId();
 		return new ModelAndView("redirect:/listDeptName?deptId=" + deptId);
 
@@ -47,11 +46,11 @@ public class DeptController {
 		List<Department> lstDept = new ArrayList<Department>();
 		
 		
-		DepartmentList lst =  restTemplate.getForObject("http://department-service/department/dept", DepartmentList.class);
+		DepartmentList lst =  restTemplate.getForObject("http://gateway-service/department/dept", DepartmentList.class);
 		for(int i=0; i< lst.getDepartments().size();i++) {
 			lstDept.add(lst.getDepartments().get(i));
 		}
-		EmployeeList empLst =  restTemplate.getForObject("http://department-service/department/emp/"+id, EmployeeList.class);
+		EmployeeList empLst =  restTemplate.getForObject("http://gateway-service/department/emp/"+id, EmployeeList.class);
 		List<Employee> listEmp = new ArrayList<Employee>();
 		for(int i=0; i< empLst.getEmployees().size();i++) {
 			listEmp.add(empLst.getEmployees().get(i));
@@ -75,7 +74,7 @@ public class DeptController {
 	public ModelAndView listDepartment(HttpServletRequest request) {
 		List<Department> lstDept = new ArrayList<Department>();
 		
-		DepartmentList lst =  restTemplate.getForObject("http://department-service/department/dept", DepartmentList.class);
+		DepartmentList lst =  restTemplate.getForObject("http://gateway-service/department/dept", DepartmentList.class);
 		System.out.println("In list dept");
 		for(int i=0; i< lst.getDepartments().size();i++) {
 			lstDept.add(lst.getDepartments().get(i));
@@ -107,12 +106,12 @@ public class DeptController {
 	
 	@PostMapping(value = "/saveDept")
 	public ModelAndView saveDepartment1(@ModelAttribute Department department,HttpServletRequest request) {
-		System.out.println("In before");
+		System.out.println("In before"+department.getDeptName());
 		ModelAndView model = new ModelAndView("form");
 		Department department1 = new Department();
 		department1.setDeptId(department.getDeptId());
 		department1.setDeptName(department.getDeptName());
-		restTemplate.postForObject("http://department-service/department/addDept", department1, Department.class);
+		restTemplate.postForObject("http://gateway-service/department/addDept", department1, Department.class);
 		System.out.println("In save department");
 		return new ModelAndView("redirect:/listDept");
 		
@@ -125,7 +124,7 @@ public class DeptController {
 	public ModelAndView editDepartment(HttpServletRequest request) {
 		int deptId = Integer.parseInt(request.getParameter("id"));
 		HttpSession session2 = request.getSession();
-		Department department = restTemplate.getForObject("http://department-service/department/listDept/"+deptId, Department.class);
+		Department department = restTemplate.getForObject("http://gateway-service/department/listDept/"+deptId, Department.class);
 		session2.setAttribute("department", department);
 		List<Department> lst = (List<Department>) session2.getAttribute("deptList");
 		session2.setAttribute("deptList", lst);
@@ -143,7 +142,7 @@ public class DeptController {
 		  department1.setDeptId(department.getDeptId());
 		  department1.setDeptName(department.getDeptName());
 		 
-		  restTemplate.put("http://department-service/department/updateDept/"+deptId, department1);
+		  restTemplate.put("http://gateway-service/department/updateDept/"+deptId, department1);
 
 		return new ModelAndView("redirect:/listDept");
 
@@ -152,7 +151,7 @@ public class DeptController {
 	@GetMapping(value = "/deleteDept")
 	public ModelAndView deleteDepartment(HttpServletRequest request) {
 		int departId = Integer.parseInt(request.getParameter("id"));
-		restTemplate.delete("http://department-service/department/deleteDept/"+departId);
+		restTemplate.delete("http://gateway-service/department/deleteDept/"+departId);
 		return new ModelAndView("redirect:/listDept");
 	}
 
