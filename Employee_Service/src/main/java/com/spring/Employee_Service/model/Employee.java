@@ -11,7 +11,6 @@ public class Employee {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int empId;
-	//@Size(min = 3, max = 30)
 	private String empName;
 	private int age;
 	private int deptId;
