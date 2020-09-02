@@ -10,7 +10,7 @@ public class FallbackController {
 	
 	@RequestMapping("/deptFallBack")
 	public Mono<String> getdeptFallback(){
-		return Mono.just("Service goes down or its getting slow...");
+		return Mono.just("Service goes down....Try again later");
 		
 	}
 

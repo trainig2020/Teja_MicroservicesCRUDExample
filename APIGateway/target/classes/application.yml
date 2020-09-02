@@ -8,6 +8,11 @@ spring:
           uri: lb://department-service
           predicates:
             - Path=/department/**
+          filters:
+            - name: Hystrix
+              args:
+               name: fallbackCommand
+               fallbackuri: forward:/deptFallBack
           
 
 server:
@@ -15,3 +20,5 @@ server:
     8084
 
 management.endpoints.web.exposure.include: "*"
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 20000
