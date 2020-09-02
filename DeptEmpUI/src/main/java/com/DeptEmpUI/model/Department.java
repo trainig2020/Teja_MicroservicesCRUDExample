@@ -1,17 +1,10 @@
 package com.DeptEmpUI.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity
 public class Department {
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private int deptId;
-	//@Size(min=2, max=20,message="Please give valid name")
+	
 	private String deptName;
 	
 

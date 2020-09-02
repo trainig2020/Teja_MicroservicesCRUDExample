@@ -1,5 +1,9 @@
 package com.DeptEmpUI;
 
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.client.RestTemplate;
@@ -23,9 +26,6 @@ import com.DeptEmpUI.controller.DeptController;
 import com.DeptEmpUI.model.Department;
 import com.DeptEmpUI.model.DepartmentList;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(DeptController.class)
@@ -45,7 +45,7 @@ public class DepartmentTest {
 	@Test
 	public void insertDepartment() throws Exception {
 		Department department = new Department(1, "Admin");
-		Mockito.when(
+		when(
 				restTemplate.postForObject("http://localhost:8084/department/addDept", department, Department.class))
 				.thenReturn(department);
 		String req = objectMapper.writeValueAsString(department);

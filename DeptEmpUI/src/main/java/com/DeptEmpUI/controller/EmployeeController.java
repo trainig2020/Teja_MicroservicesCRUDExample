@@ -3,6 +3,7 @@ package com.DeptEmpUI.controller;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,23 +25,26 @@ public class EmployeeController {
 	
 	@SuppressWarnings("unchecked")
 	@GetMapping(value = "/newEmp")
-	public ModelAndView showFormForAdd(HttpServletRequest request,ModelAndView modelAndView) {
+	public ModelAndView showFormForAdd(HttpServletRequest request) {
 		
 		String Register  = "NewForm";
 		HttpSession session1 = request.getSession();
+		
 		List<Employee> lst =(List<Employee>)session1.getAttribute("empLst");
 		List<Department> deptlst = (List<Department>) session1.getAttribute("deptList");
-		modelAndView.addObject("deptLst", deptlst);
+		 
+		//int did = lst.get(0).getDeptId();
 		ModelAndView model = new ModelAndView("form");
+		model.addObject("deptLst", deptlst);
 		model.addObject("empLst", lst);
 		model.addObject("Register", Register);
 		model.addObject("addEmp", "regEmp");
-		model.addObject("home", "homemp");	
+		model.addObject("home", "homemp");
 		return model;	
 	}
 	
 	@PostMapping(value = "/saveEmp")
-	public ModelAndView saveEmployee( HttpServletRequest request,@ModelAttribute Employee employee) {
+	public ModelAndView saveEmployee( HttpServletRequest request,@ModelAttribute Employee employee, HttpServletResponse response) {
 		//String deptName =request.getParameter("deptName");
 		//List<Department> lst = departmentService.getAllDepartments();
 		int deptId =  Integer.parseInt(request.getParameter("deptId"));
@@ -51,7 +55,7 @@ public class EmployeeController {
 		employee1.setDeptId(employee.getDeptId());
 		
 		
-		restTemplate.postForObject("http://gateway-service/department/addEmp", employee1, Employee.class);
+		restTemplate.postForObject("http://gateway-service/department/addEmp", employee, Employee.class);
 
 		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
 	}
@@ -74,7 +78,7 @@ public class EmployeeController {
 	}
 
 	@PostMapping(value = "/updateEmp")
-	public ModelAndView updateEmployee(HttpServletRequest request, @ModelAttribute Employee employee) {
+	public ModelAndView updateEmployee(HttpServletRequest request, @ModelAttribute Employee employee, HttpServletResponse response) {
 		
 		int employeeId = Integer.parseInt(request.getParameter("empId"));
 		int deptId =  Integer.parseInt(request.getParameter("deptId"));

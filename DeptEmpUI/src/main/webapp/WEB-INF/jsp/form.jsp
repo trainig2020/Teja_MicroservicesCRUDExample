@@ -219,7 +219,6 @@ table {
 							<th><spring:message code="label.empName"></spring:message></th>
 							<th><spring:message code="label.age"></spring:message></th>
 							<th><spring:message code="label.deptId"></spring:message></th>
-							<th><spring:message code="label.deptName"></spring:message></th>
 							<th><spring:message code="label.update"></spring:message></th>
 							<th><spring:message code="label.delete"></spring:message></th>
 						</tr>
@@ -248,15 +247,11 @@ table {
 									<td>${emp.empName}</td>
 									<td>${emp.age}</td>
 									<td>${emp.deptId}</td>
-									<c:forEach items="${deptLst}" var="dtn">
-										<c:if test="${emp.deptId eq dtn.deptId}">
-											<td>${dtn.deptName}</td>
-										</c:if>
-									</c:forEach>
+									
 									<td><a
 										href="editEmp?empId=${emp.empId}&deptId=${emp.deptId}"><spring:message
 												code="label.update"></spring:message></a></td>
-									<td><a
+									<td ><a
 										href="deleteEmp?empId=${emp.empId}&deptId=${emp.deptId}"><spring:message
 												code="label.delete"></spring:message></a></td>
 								</tr>
@@ -267,9 +262,14 @@ table {
 								<td><input type="text" name="empId" /></td>
 								<td><input type="text" name="empName" /></td>
 								<td><input type="text" name="age" /></td>
-								<td><input type="text" name="deptId" /></td>
+								
+								
+								<td><input type="text" name="deptId"  />	</td>
+								
+								
+								
 
-								<td colspan="3"><input type="submit" value="save" /></td>
+								<td colspan="2"><input type="submit" value="save" /></td>
 							</tr>
 				
 						</c:if>

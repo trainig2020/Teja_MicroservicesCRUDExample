@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,7 @@ public class DeptController {
 
 	
 	@GetMapping("/listDeptName")
-	public ModelAndView listDeptName(HttpServletRequest request, ModelAndView modelAndView) {
+	public ModelAndView listDeptName(HttpServletRequest request, ModelAndView modelAndView, HttpServletResponse response) {
 		int id = Integer.parseInt(request.getParameter("deptId"));
 		List<Department> lstDept = new ArrayList<Department>();
 		
@@ -105,13 +106,13 @@ public class DeptController {
 	}
 	
 	@PostMapping(value = "/saveDept")
-	public ModelAndView saveDepartment1(@ModelAttribute Department department,HttpServletRequest request) {
+	public ModelAndView saveDepartment1(@ModelAttribute Department department,HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("In before"+department.getDeptName());
 		ModelAndView model = new ModelAndView("form");
 		Department department1 = new Department();
 		department1.setDeptId(department.getDeptId());
 		department1.setDeptName(department.getDeptName());
-		restTemplate.postForObject("http://gateway-service/department/addDept", department1, Department.class);
+		restTemplate.postForObject("http://gateway-service/department/addDept", department, Department.class);
 		System.out.println("In save department");
 		return new ModelAndView("redirect:/listDept");
 		
@@ -135,14 +136,14 @@ public class DeptController {
 	}
 	
 	@PostMapping(value = "/updateDept")
-	public ModelAndView updateEmployee(HttpServletRequest request, @ModelAttribute Department department) {
+	public ModelAndView updateEmployee(HttpServletRequest request, @ModelAttribute Department department, HttpServletResponse response) {
 		int deptId =  Integer.parseInt(request.getParameter("deptId"));
 
 		  Department department1 = new Department();
 		  department1.setDeptId(department.getDeptId());
 		  department1.setDeptName(department.getDeptName());
 		 
-		  restTemplate.put("http://gateway-service/department/updateDept/"+deptId, department1);
+		  restTemplate.put("http://gateway-service/department/updateDept/"+deptId, department);
 
 		return new ModelAndView("redirect:/listDept");
 

@@ -1,17 +1,9 @@
 package com.DeptEmpUI.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-
-@Entity
 public class Employee {
 	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	
 	private int empId;
-	//@Size(min = 3, max = 30)
 	private String empName;
 	private int age;
 	private int deptId;
