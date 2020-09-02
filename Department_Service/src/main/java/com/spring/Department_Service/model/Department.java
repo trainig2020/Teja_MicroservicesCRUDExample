@@ -9,9 +9,8 @@ import javax.persistence.Id;
 public class Department {
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.AUTO)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int deptId;
-	//@Size(min=2, max=20,message="Please give valid name")
 	private String deptName;
 	
 

@@ -2,7 +2,6 @@ package com.spring.Department_Service.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -16,19 +15,25 @@ public class EmployeeService {
 	@Autowired
 	private RestTemplate restTemplate;
 	
+	
 	public EmployeeList getAllEmployees(){
 		return  restTemplate.getForObject("http://employee-service/emp", EmployeeList.class);
 	}
-
+	
+	@HystrixCommand(fallbackMethod = "getFallbackEmp")
 	public Employee getEmployeeById(int id) {
 		return  restTemplate.getForObject("http://employee-service/listEmp/"+id, Employee.class);
+	}
+	
+	public Employee getFallbackEmp(int id) {
+		return new Employee(id, "No Employee available", 0, 0);
 	}
 	@HystrixCommand(fallbackMethod = "getFallbackAddEmp")
 	public Employee insertEmployee(Employee employee) {
 		return restTemplate.postForObject("http://employee-service/addEmp", employee, Employee.class);
 	}
 	
-	public Employee getFallbackAddEmp(@RequestBody Employee employee) {
+	public Employee getFallbackAddEmp( Employee employee) {
 		return new Employee(0, "No Employee available", 0, 0);
 	}
 	
