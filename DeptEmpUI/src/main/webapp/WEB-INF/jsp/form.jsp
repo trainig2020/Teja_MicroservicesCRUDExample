@@ -18,13 +18,12 @@
 }
 
 #footer {
-	
 	width: 100%;
 	text-align: center;
 	background-color: gray;
-	bottom:0;
+	bottom: 0;
 	height: 50px;
-	position:absolute;
+	position: absolute;
 }
 
 .any {
@@ -37,6 +36,11 @@
 	float: right;
 	padding: 15px;
 	margin-right: 25px;
+}
+
+#pagination{
+  float: right;
+  margin-right: 450px;
 }
 
 #sidebar-left {
@@ -56,12 +60,10 @@
 }
 
 table {
-
 	text-align: center;
 	table-layout: auto;
 	padding: inherit;
 	height: 180px;
-	
 }
 </style>
 </head>
@@ -69,10 +71,19 @@ table {
 
 	<div id="header">
 		<div class="any">
-			
-				<a href="listDept"><font color="white"><spring:message
-							code="label.home"></spring:message></font></a>
-			
+			<a href="listDept"><font color="white"><spring:message
+						code="label.home"></spring:message></font></a>
+			<c:if test="${deptlang eq 'language'}">
+
+				<a href="listDept?siteLanguage=en">English</a>|<a
+					href="listDept?siteLanguage=fr">French</a>
+			</c:if>
+
+			<c:if test="${emplang eq 'lang'}">
+				<a href="home?siteLanguage=en">English</a>|<a
+					href="home?siteLanguage=fr">French</a>
+			</c:if>
+
 		</div>
 		<div class="logout">
 
@@ -86,7 +97,7 @@ table {
 		<br>
 
 	</div>
-	
+
 
 
 	<div id="sidebar-left">
@@ -105,7 +116,7 @@ table {
 					<br>
 					<a href="deptControl"><b>=></b></a>
 					<button type="button" class="btn btn-success" style="width: 100px;">
-						<a href="listDeptName?deptId=${dept.deptId}"><font
+						<a href="listEmp?deptId=${dept.deptId}"><font
 							color="black">${dept.deptName} </font></a>
 					</button>
 					<br>
@@ -127,10 +138,10 @@ table {
 
 
 				<c:if test="${Register eq 'NewFormDept'}">
-					<form action="saveDept" method="post" >
+					<form action="saveDept" method="post">
 				</c:if>
 				<c:if test="${Register ne 'NewFormDept'}">
-					<form action="updateDept" method="post" >
+					<form action="updateDept" method="post">
 				</c:if>
 
 				<table border="1" style="width: 70%">
@@ -179,7 +190,7 @@ table {
 						</c:forEach>
 						<c:if test="${insertDept eq 'newDept'}">
 							<tr>
-								<td><input type="text" name="depId" /></td>
+								<td><input type="" name="depId" /></td>
 								<td><input type="text" name="deptName" /></td>
 
 								<td colspan="2"><input type="submit" value="save" /></td>
@@ -189,7 +200,40 @@ table {
 				</table>
 
 			</div>
-			
+			<div id="pagination">
+
+ 
+
+                        <c:url value="/listDept" var="prev">
+                            <c:param name="page" value="${page-1}" />
+                        </c:url>
+                        <c:if test="${page > 1}">
+                            <a href="<c:out value="${prev}" />" class="pn prev">Prev</a>
+                        </c:if>
+
+ 
+
+                        <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
+                            <c:choose>
+                                <c:when test="${page == i.index}">
+                                    <span>${i.index}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url value="/listDept" var="url">
+                                        <c:param name="page" value="${i.index}" />
+                                    </c:url>
+                                    <a href='<c:out value="${url}" />'>${i.index}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        </c:forEach>
+                        <c:url value="/listDept" var="next">
+                            <c:param name="page" value="${page + 1}" />
+                        </c:url>
+                        <c:if test="${page + 1 <= maxPages}">
+                            <a href='<c:out value="${next}" />' class="pn next">Next</a>
+                        </c:if>
+                    </div>
+
 		</c:if>
 
 
@@ -247,11 +291,11 @@ table {
 									<td>${emp.empName}</td>
 									<td>${emp.age}</td>
 									<td>${emp.deptId}</td>
-									
+
 									<td><a
 										href="editEmp?empId=${emp.empId}&deptId=${emp.deptId}"><spring:message
 												code="label.update"></spring:message></a></td>
-									<td ><a
+									<td><a
 										href="deleteEmp?empId=${emp.empId}&deptId=${emp.deptId}"><spring:message
 												code="label.delete"></spring:message></a></td>
 								</tr>
@@ -259,26 +303,63 @@ table {
 						</c:forEach>
 						<c:if test="${addEmp eq 'regEmp'}">
 							<tr>
-								<td><input type="text" name="empId" /></td>
+								<td><input type="" name="empId" /></td>
 								<td><input type="text" name="empName" /></td>
 								<td><input type="text" name="age" /></td>
-								
-								
-								<td><input type="text" name="deptId"  />	</td>
-								
-								
-								
+
+
+								<td><input type="text" name="deptId" /></td>
+
+
+
 
 								<td colspan="2"><input type="submit" value="save" /></td>
 							</tr>
-				
+
 						</c:if>
 					</tbody>
 				</table>
-				</div>
-				
-				
-		</c:if>
+			</div>
+
+
+		
+		<div id="pagination">
+
+ 
+
+                        <c:url value="/home" var="prev">
+                            <c:param name="page" value="${page-1}" />
+                        </c:url>
+                        <c:if test="${page > 1}">
+                            <a href="<c:out value="${prev}" />" class="pn prev">Prev</a>
+                        </c:if>
+
+ 
+
+                        <c:forEach begin="1" end="${maxPages}" step="1" varStatus="i">
+                            <c:choose>
+                                <c:when test="${page == i.index}">
+                                    <span>${i.index}</span>
+                                </c:when>
+                                <c:otherwise>
+                                    <c:url value="/home" var="url">
+                                        <c:param name="page" value="${i.index}" />
+                                    </c:url>
+                                    <a href='<c:out value="${url}" />'>${i.index}</a>
+                                </c:otherwise>
+                            </c:choose>
+                        
+                        
+                        <c:url value="/home" var="next">
+                            <c:param name="page" value="${page + 1}" />
+                        </c:url>
+                        </c:forEach>
+                        <c:if test="${page + 1 <= maxPages}">
+                            <a href='<c:out value="${next}" />' class="pn next">Next</a>
+                        </c:if>
+                       
+                    </div>
+                    </c:if>
 	</div>
 
 

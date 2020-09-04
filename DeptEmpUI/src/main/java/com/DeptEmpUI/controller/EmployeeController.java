@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +19,6 @@ import com.DeptEmpUI.model.Department;
 import com.DeptEmpUI.model.Employee;
 
 @RestController
-
 public class EmployeeController {
 	@Autowired
 	private RestTemplate restTemplate;
@@ -35,8 +35,24 @@ public class EmployeeController {
 		 
 		//int did = lst.get(0).getDeptId();
 		ModelAndView model = new ModelAndView("form");
+		PagedListHolder<Employee> pagedListHolder = new PagedListHolder<Employee>(lst);
+		pagedListHolder.setPageSize(3);
+
+		model.addObject("maxPages", pagedListHolder.getPageCount());
+		Integer page =  (Integer) session1.getAttribute("page");
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount())
+			page = 1;
+
+		model.addObject("page", page);
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			model.addObject("empLst", pagedListHolder.getPageList());
+		} else if (page <= pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(page - 1);
+			model.addObject("empLst", pagedListHolder.getPageList());
+		}
 		model.addObject("deptLst", deptlst);
-		model.addObject("empLst", lst);
+		//model.addObject("empLst", lst);
 		model.addObject("Register", Register);
 		model.addObject("addEmp", "regEmp");
 		model.addObject("home", "homemp");
@@ -57,7 +73,7 @@ public class EmployeeController {
 		
 		restTemplate.postForObject("http://gateway-service/department/addEmp", employee, Employee.class);
 
-		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
+		return new ModelAndView("redirect:/listEmp?deptId="+deptId);
 	}
 
 
@@ -91,7 +107,7 @@ public class EmployeeController {
 		 
 		  restTemplate.put("http://gateway-service/department/updateEmp/"+employeeId, employee);
 
-		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
+		return new ModelAndView("redirect:/listEmp?deptId="+deptId);
 
 	}
 
@@ -100,7 +116,7 @@ public class EmployeeController {
 		int employeeId = Integer.parseInt(request.getParameter("empId"));
 		int deptId = Integer.parseInt(request.getParameter("deptId"));
 		restTemplate.delete("http://gateway-service/department/deleteEmp/"+employeeId);
-		return new ModelAndView("redirect:/listDeptName?deptId="+deptId);
+		return new ModelAndView("redirect:/listEmp?deptId="+deptId);
 	}
 
 

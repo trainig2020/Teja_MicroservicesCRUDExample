@@ -7,10 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.support.PagedListHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.ModelAndView;
@@ -22,6 +26,8 @@ import com.DeptEmpUI.model.EmployeeList;
 
 @RestController
 public class DeptController {
+	
+	private static final Logger logger = LoggerFactory.getLogger(DeptController.class);
 	@Autowired
 	private RestTemplate restTemplate;
 	
@@ -32,17 +38,22 @@ public class DeptController {
 	}
 	
 	
+	
 	@GetMapping("/home")
-	public ModelAndView listDeptId(HttpServletRequest request) {
+	public ModelAndView listDeptId(HttpServletRequest request, ModelAndView modelAndView,@RequestParam(required = false) Integer page) {
 		DepartmentList lst =  restTemplate.getForObject("http://gateway-service/department/dept", DepartmentList.class);
 		int deptId = lst.getDepartments().get(0).getDeptId();
-		return new ModelAndView("redirect:/listDeptName?deptId=" + deptId);
+		modelAndView.addObject("emplang", "lang");
+		HttpSession httpSession = request.getSession();
+		httpSession.setAttribute("page", page);
+		return new ModelAndView("redirect:/listEmp?deptId=" + deptId+"&page="+page);
 
 	}
 
 	
-	@GetMapping("/listDeptName")
+	@GetMapping("/listEmp")
 	public ModelAndView listDeptName(HttpServletRequest request, ModelAndView modelAndView, HttpServletResponse response) {
+		HttpSession httpSession = request.getSession();
 		int id = Integer.parseInt(request.getParameter("deptId"));
 		List<Department> lstDept = new ArrayList<Department>();
 		
@@ -57,13 +68,30 @@ public class DeptController {
 			listEmp.add(empLst.getEmployees().get(i));
 		}
 
+		logger.info("This is Employee list");
 		
-		HttpSession httpSession = request.getSession();
+		PagedListHolder<Employee> pagedListHolder = new PagedListHolder<Employee>(listEmp);
+		pagedListHolder.setPageSize(3);
+
+		modelAndView.addObject("maxPages", pagedListHolder.getPageCount());
+		Integer page =  (Integer) httpSession.getAttribute("page");
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount())
+			page = 1;
+
+		modelAndView.addObject("page", page);
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			modelAndView.addObject("empLst", pagedListHolder.getPageList());
+		} else if (page <= pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(page - 1);
+			modelAndView.addObject("empLst", pagedListHolder.getPageList());
+		}
 		httpSession.setAttribute("empLst", listEmp);
 		modelAndView.addObject("deptLst", lstDept);
-		modelAndView.addObject("empLst", listEmp);
+		//modelAndView.addObject("empLst", listEmp);
 		modelAndView.addObject("home", "homemp");
 		modelAndView.addObject("check", "checklist");
+		modelAndView.addObject("emplang", "lang");
 		modelAndView.setViewName("form");
 
 		return modelAndView;
@@ -72,7 +100,8 @@ public class DeptController {
 
 
 	@GetMapping("/listDept")
-	public ModelAndView listDepartment(HttpServletRequest request) {
+	public ModelAndView listDepartment(HttpServletRequest request, @RequestParam(required = false)Integer page) {
+		logger.info("This is Department list");
 		List<Department> lstDept = new ArrayList<Department>();
 		
 		DepartmentList lst =  restTemplate.getForObject("http://gateway-service/department/dept", DepartmentList.class);
@@ -81,9 +110,28 @@ public class DeptController {
 			lstDept.add(lst.getDepartments().get(i));
 		}
 		ModelAndView modelAndView = new ModelAndView("form");
-		modelAndView.addObject("deptList", lstDept);
+		
+		
+		PagedListHolder<Department> pagedListHolder = new PagedListHolder<Department>(lstDept);
+		pagedListHolder.setPageSize(3);
 
+		modelAndView.addObject("maxPages", pagedListHolder.getPageCount());
+
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount())
+			page = 1;
+
+		modelAndView.addObject("page", page);
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			modelAndView.addObject("deptList", pagedListHolder.getPageList());
+		} else if (page <= pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(page - 1);
+			modelAndView.addObject("deptList", pagedListHolder.getPageList());
+		}
+		//modelAndView.addObject("deptList", lstDept);
+		modelAndView.addObject("deptlang", "language");
 		HttpSession session = request.getSession();
+		session.setAttribute("page", page);
 		session.setAttribute("deptList", lstDept);
 		return modelAndView;
 
@@ -97,6 +145,22 @@ public class DeptController {
 		HttpSession session1 = request.getSession();
 		List<Department> lst = (List<Department>) session1.getAttribute("deptList");
 		session1.setAttribute("deptList", lst);
+		PagedListHolder<Department> pagedListHolder = new PagedListHolder<Department>(lst);
+		pagedListHolder.setPageSize(3);
+
+		model.addObject("maxPages", pagedListHolder.getPageCount());
+		Integer page =  (Integer) session1.getAttribute("page");
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount())
+			page = 1;
+
+		model.addObject("page", page);
+		if (page == null || page < 1 || page > pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(0);
+			model.addObject("deptList", pagedListHolder.getPageList());
+		} else if (page <= pagedListHolder.getPageCount()) {
+			pagedListHolder.setPage(page - 1);
+			model.addObject("deptList", pagedListHolder.getPageList());
+		}
 		model.addObject("Register", Register);
 		model.addObject("insertDept", "newDept");
 		model.setViewName("form");
